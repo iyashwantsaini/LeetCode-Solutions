@@ -1,84 +1,63 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 
-
-bool GetPath(int **edges,int n,int sv,int ev, bool *visited, vector<int> *vec)
+int expand_out(string s, int i, int j, int len)
 {
-	int i;
-	visited[sv] = true;
-	if(visited[ev] == true)
+	int ans = 0;
+	// if(even)
+	if (i != j)
 	{
-		return true;
-	}
-	
-	for(i=0;i<n;i++)
-	{
-		if(i == sv)
+		while (i >= 0 && j < len && s[i] == s[j])
 		{
-			continue;
-		}
-		if(visited[i] == false && edges[sv][i] == 1)
-		{
-			bool ans=GetPath(edges,n,i,ev,visited,vec);
-			if(ans)
-			{
-				vec->push_back(i);
-				return true;
-			}
+			ans += 2;
+			i--;
+			j++;
 		}
 	}
-	return false;	
+	// if(odd) => i==j
+	else
+	{
+		ans = 1;
+		i--;
+		j++;
+		while (i >= 0 && j < len && s[i] == s[j])
+		{
+			ans += 2;
+			i--;
+			j++;
+		}
+	}
+	return ans;
 }
-
+int longestPalindrome(string s)
+{
+	int len = s.length();
+	int maxlen = 0;
+	// expand outwards from every element's index
+	for (int i = 0; i < len; i++)
+	{
+		// find for odd
+		int forodd = expand_out(s, i, i, len);
+		// find for even
+		// only if next is equal
+		int foreven = INT_MIN;
+		if ((i + 1 < len) && (s[i] == s[i + 1]))
+		{
+			foreven = expand_out(s, i, i + 1, len);
+		}
+		int maxcurr = max(foreven, forodd);
+		if (maxcurr > maxlen)
+		{
+			maxlen = maxcurr;
+		}
+	}
+	return maxlen;
+}
 
 int main()
 {
-	int n,e,i,j;
-	cin >> n >> e;
-	
-	int **edges = new int*[n];
-	
-	
-	for(i=0;i<n;i++)
-	{
-		edges[i] = new int[n];
-		for(j=0;j<n;j++)
-		{
-			edges[i][j] = 0;
-		}
-	}
-	
-	int f,s;
-	for(i=0;i<e;i++)
-	{
-		cin >> f >> s;
-		edges[f][s] = 1;
-		edges[s][f] = 1;
-	}
-	
-	bool *visited = new bool[n];
-	for(i=0;i<n;i++)
-	{
-		visited[i] = false;
-	}
-	
-	int sv,ev;
-	cin >> sv >> ev;
-	
-	vector<int> *vec=new vector<int>;
-	
-	bool ans = GetPath(edges,n,sv,ev,visited,vec);
-	
-	if(ans)
-	{
-		for(i=0;i<vec->size();i++)
-		{
-			cout << vec->at(i) << " ";
-		}
-		cout << endl;
-	}
-	else
-	{
-		cout << "" << endl;
-	}
+	cout<<longestPalindrome("babad")<<endl;
+	cout<<longestPalindrome("cbbd")<<endl;
+	cout<<longestPalindrome("a")<<endl;
+	cout<<longestPalindrome("ac")<<endl;
 }
