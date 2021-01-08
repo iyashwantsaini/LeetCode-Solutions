@@ -1,58 +1,41 @@
 #include<bits/stdc++.h>
 using namespace std;
+typedef long long ll;
 
-//Sample Input
-// 3
-// AAA
-// ABCDEFG
-// CODECRAFT
-//Sample Output
-//4
-//128
-//496
+// @lc code=start
+class Solution {
+public:
+    vector<int> findSubstring(string s, vector<string>& words) {
+        // vector for answers
+        vector<int> ans;
+        // step 1 => save array in hashmap
+        unordered_map<string,int> m;
+        for(int i=0;i<words.size();i++){
+            m[words[i]]++;
+        }
+        // length of all words in array are same => given
+        int totlen=words[0].size()*words.size();
+        for(int i=0;i+totlen<=s.size();i++){
+            string curr=s.substr(i,totlen);
+            unordered_map<string,int> n;
+            int j=0;
+            while(j+words[0].size()<=curr.size()){
+                n[curr.substr(j,words[0].size())]++;
+                j=j+words[0].size();
+            }
+            if(n==m){
+                ans.push_back(i);
+            }
+        }
+        return ans;
+    }
+};
+// @lc code=end
 
-int Subsequences(string in,string out, int **dp)
-{
-	int ans,option1, option2;
-	int len_in=in.length();
-	int len_out=out.length();
-
-	if(len_in == 0)
-	{
-		return 1;
-	}
-	if(dp[len_in][len_out] != -1)
-	{
-		return dp[len_in][len_out];
-	}
-	// include
-	option1 = Subsequences(in.substr(1),out+in[0],dp);
-	// exclude
-	option2 = Subsequences(in.substr(1),out,dp);
-	ans = option1 + option2;
-	dp[len_in][len_out]= ans;
-	return ans;
-}
-
-int main()
-{
-	int t,n,i;
-	cin >> t;
-	while(t>0)
-	{
-		string str;
-		cin >>str;
-		n= str.length();
-		
-		int **dp = new int*[n+1];
-		for(int i=0;i<=n;i++){
-			dp[i]=new int[n+1];
-			for(int  j=0;j<=n;j++){
-				dp[i][j]=-1;
-			}
-		}
-		int ans = Subsequences(str,"",dp);
-		cout << ans << endl;		
-		t--;
-	}
+int main(){
+    Solution s;
+    vector<string> v;
+    v.push_back("foo");
+    v.push_back("bar");
+    s.findSubstring("barfoothefoobarman",v);
 }
